@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+
+{% block title %} Add Transactions {% endblock %}
+
+{% block main %}
+    <h1 class="mb-4">WELCOME ABDULLAH</h1>
+    <div id="form-container" class="stacked-form">
+        <form action="/add" method="post" class="needs-validation" novalidate>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Name" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="network">Network</label>
+                <select class="form-control" id="network" name="network" required>
+                    <option value="" selected disabled>--Select Network--</option>
+                    {% for networks in network %}
+                        <option value="{{ networks }}">{{ networks }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="d_or_a">Data or Airtime</label>
+                <select class="form-control" id="d_or_a" name="d_or_a" required>
+                    <option value="" selected disabled>--Data/Airtime--</option>
+                    <option value="Airtime">Airtime</option>
+                    <option value="Data">Data</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="payment_method">Payment Method</label>
+                <select class="form-control" id="payment_method" name="payment_method" required>
+                    <option value="" selected disabled>--Payment method--</option>
+                    <option value="Cash">Cash</option>
+                    <option value="on account">On Account</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="plan">Plan</label>
+                <input type="text" class="form-control" id="plan" name="plan" placeholder="Plan" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount Paid</label>
+                <input type="text" class="form-control" id="amount" name="amount" placeholder="Amount Paid" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="remark">Remark</label>
+                <textarea class="form-control" id="remark" name="remark" placeholder="Remark" autocomplete="off"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

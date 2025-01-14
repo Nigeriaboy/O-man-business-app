@@ -1,0 +1,65 @@
+{% extends 'layout.html' %}
+
+{% block title %} Homepage {% endblock %}
+
+{% block main %}
+<h1>Transaction Table</h1>
+
+<table>
+    <tr>
+        <th>Transaction ID</th>
+        <th>Customer Name</th>
+        <th>Network</th>
+        <th>Data or Airtime</th>
+        <th>Payment Method</th>
+        <th>Plan</th>
+        <th>Amount Paid</th>
+        <th>Date</th>
+        <th>Remark</th>
+    </tr>
+    {% for transaction in transactions %}
+        <tr>
+            <td>{{ transaction.transaction_id }}</td>
+            <td>{{ transaction.cust_name }}</td>
+            <td>{{ transaction.network }}</td>
+            <td>{{ transaction.data_or_airtime }}</td>
+            <td>{{ transaction.payment_method }}</td>
+            <td>{{ transaction.plan }}</td>
+            <td>{{ transaction.amount }}</td>
+            <td>{{ transaction.date }}</td>
+            <td>{{ transaction.remark }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<div id="buttons">
+    <button><a href="/add" >Add Transaction</a></button>
+    <button id="delete">Delete Transaction</button>
+</div>
+
+<script>
+    document.getElementById('delete').addEventListener('click', function() {
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '/delete';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'id';
+        input.placeholder = 'Enter Transaction ID';
+
+        const submit = document.createElement('input');
+        submit.type = 'submit';
+        submit.value = 'Submit';
+
+        form.appendChild(input);
+        form.appendChild(submit);
+
+        document.body.appendChild(form);
+    });
+
+</script>
+
+
+{% endblock %}
