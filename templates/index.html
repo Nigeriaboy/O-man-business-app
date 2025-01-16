@@ -3,60 +3,69 @@
 {% block title %} Homepage {% endblock %}
 
 {% block main %}
-<h1>Transaction Table</h1>
 
-<table>
-    <tr>
-        <th>Transaction ID</th>
-        <th>Customer Name</th>
-        <th>Network</th>
-        <th>Data or Airtime</th>
-        <th>Payment Method</th>
-        <th>Plan</th>
-        <th>Amount Paid</th>
-        <th>Date</th>
-        <th>Remark</th>
-    </tr>
-    {% for transaction in transactions %}
+<h1 class="text-center">Transaction History</h1>
+
+<div class="table-responsive">
+    <table>
         <tr>
-            <td>{{ transaction.transaction_id }}</td>
-            <td>{{ transaction.cust_name }}</td>
-            <td>{{ transaction.network }}</td>
-            <td>{{ transaction.data_or_airtime }}</td>
-            <td>{{ transaction.payment_method }}</td>
-            <td>{{ transaction.plan }}</td>
-            <td>{{ transaction.amount }}</td>
-            <td>{{ transaction.date }}</td>
-            <td>{{ transaction.remark }}</td>
+            <th>Transaction ID</th>
+            <th>Customer Name</th>
+            <th>Network</th>
+            <th>Data or Airtime</th>
+            <th>Payment Method</th>
+            <th>Plan</th>
+            <th>Amount Paid</th>
+            <th>Date</th>
+            <th>Remark</th>
         </tr>
-    {% endfor %}
-</table>
-
-<div id="buttons">
-    <button><a href="/add" >Add Transaction</a></button>
-    <button id="delete">Delete Transaction</button>
+        {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.transaction_id }}</td>
+                <td>{{ transaction.cust_name }}</td>
+                <td>{{ transaction.network }}</td>
+                <td>{{ transaction.data_or_airtime }}</td>
+                <td>{{ transaction.payment_method }}</td>
+                <td>{{ transaction.plan }}</td>
+                <td>{{ transaction.amount }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.remark }}</td>
+            </tr>
+        {% endfor %}
+    </table>
 </div>
 
+
+<!-- Delete transaction section -->
+<div id="delete">
+    <div id="buttons">
+        <button id="delete">Delete Transaction</button>
+    </div>
+
+    <div class="container delete-container" style="display: none;">
+        <form action="/delete" method="post">
+                <div class="col delete-col1">
+                    <input autocomplete="off" autofocus type="text" name="id" placeholder="Enter Transaction ID">
+                </div> 
+                <div class="col delete-col2">
+                    <input type="submit" value="Submit">
+                </div>
+        </form>
+    </div>
+</div>
+
+
+
 <script>
-    document.getElementById('delete').addEventListener('click', function() {
+    document.getElementById('buttons').addEventListener('click', function() {
 
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/delete';
-
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.name = 'id';
-        input.placeholder = 'Enter Transaction ID';
-
-        const submit = document.createElement('input');
-        submit.type = 'submit';
-        submit.value = 'Submit';
-
-        form.appendChild(input);
-        form.appendChild(submit);
-
-        document.body.appendChild(form);
+        let container = document.querySelector(".delete-container")
+        if (container.style.display === "none"){
+            container.style.display = "block";
+        }
+        else{
+            container.style.display = "none"
+        }
     });
 
 </script>
