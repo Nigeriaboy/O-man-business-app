@@ -32,9 +32,10 @@ def add():
         payment_method = request.form.get("payment_method")
         plan = request.form.get("plan")
         amount = request.form.get("amount")
-        remark = request.form.get("remark")
-        if not remark:
-            remark = "--"
+        remark = request.form.get("remark", "--")
+
+        if not (name and network and data_or_airtime and payment_method and plan and amount):
+            return redirect("/error_message")
 
         conn.execute("INSERT INTO transactions (cust_name, network, data_or_airtime, payment_method, plan, amount, remark) VALUES (?,?,?,?,?,?,?)", (name, network, data_or_airtime, payment_method, plan, amount, remark))
         conn.commit()
@@ -50,5 +51,44 @@ def delete():
     conn.commit()
     conn.close()
     return redirect('/')
+
+@app.route('/error_message')
+def error_message():
+    return render_template("error-message.html")
+
+@app.route('/search', methods=['POST'])
+def search():
+    name = request.form.get("name")
+    date = request.form.get("date")
+    
+    # Check if the user did not enter any search value
+    if not name and not date:
+        return redirect("/error_message")
+
+    # check if the user entered only the name
+    if name and not date:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM transactions WHERE cust_name LIKE ?", ('%' + name + '%',))
+        transactions = cursor.fetchall()
+        conn.close()
+        return render_template('index.html', transactions=transactions)
+    
+    # check if the user entered only the date
+    if date and not name:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM transactions WHERE date LIKE ?", ('%' + date + '%',))
+        transactions = cursor.fetchall()
+        conn.close()
+        return render_template('index.html', transactions=transactions)
+    
+    # check if the user entered both the name and the date
+    if name and date:
+        conn = connect_db()
+        cursor = conn.execute("SELECT * FROM transactions WHERE cust_name LIKE ? AND date LIKE ?", ('%' + name + '%', '%' + date + '%',))
+        transactions = cursor.fetchall()
+        conn.close()
+        return render_template('index.html', transactions=transactions)
+
+
     
    

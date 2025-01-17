@@ -5,6 +5,7 @@ table {
     margin: 20px 0;
     font-size: 18px;
     text-align: left;
+    transform: scale(0.9);
     }
 th, td {
     padding: 12px;
@@ -38,11 +39,30 @@ td:last-child, th:last-child {
     border-radius: 5px;
 }
 
-.nav-links a {
-    text-decoration: none;
-    color: black;
+.nav-links {
     display: flex;
     list-style: none;
+    gap: 10px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    justify-content: end;
+    margin-right: 20px;
+}
+
+.nav-links a{
+    text-decoration: none;
+    color: black;
+    text-align: right;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: rgb(4, 115, 243);
+}
+
+nav {
+    border-bottom: 1px solid rgb(223, 219, 219);
+    margin-bottom: 10px;
 }
 
 .form-group {
@@ -51,4 +71,76 @@ td:last-child, th:last-child {
 
 label {
     font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 5px;
+    padding-right: 80px;
+    margin-top: 10px;
+}
+
+.stacked-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.needs-validation {
+    display: block;
+    border: solid 1px #ddd;
+    padding: 80px;
+    width: 500px;
+}
+
+.delete-container {
+    margin-top: 10px;
+    padding: 0px;
+    margin-left: 50px;
+    margin-right: 0px;
+}
+
+.delete-col1, .delete-col2 {
+    margin-bottom: 5px;
+}
+
+#delete {
+    margin-left: 50px;
+    margin-top: 10px;
+}
+
+#search {
+    text-align: center;
+}
+
+#search input::placeholder{
+    font-size: small;
+}
+
+#search span {
+    text-align: left;
+}
+
+/* ...existing code... */
+
+@media (max-width: 480px) {
+    form {
+        transform: scale(0.8);
+    }
+
+    .form-group {
+        transform: scale(1.25);
+        margin-top: 25px;
+    }
+
+    form {
+        transform: scale(0.8);
+    }
+
+    #search input, #search span {
+        margin-bottom: 5px;
+        display: block;
+        text-align: center;
+    }
+
 }

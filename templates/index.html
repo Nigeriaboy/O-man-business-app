@@ -6,6 +6,13 @@
 
 <h1 class="text-center">Transaction History</h1>
 
+<form id="search" action="/search", method="post">
+    <input type="text" name="name" placeholder="Search by Customer Name">
+    <span>or</span>
+    <input type="text" name="date" placeholder="Date (yyyy-mm-dd)">
+    <input type="submit" value="Search">
+</form>
+
 <div class="table-responsive">
     <table>
         <tr>
