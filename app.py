@@ -1,9 +1,15 @@
 import sqlite3
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, flash
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 # Configure app
 app = Flask(__name__)
+
+app.secret_key = os.getenv("SECRET_KEY")
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # Connect Database
 def connect_db():
@@ -44,13 +50,37 @@ def add():
     else:
         return render_template('add.html', network=networks)
     
-@app.route('/delete', methods=['POST'])
-def delete():
+@app.route('/delete_transaction', methods=['POST'])
+def delete_transaction():
+    password = request.form.get("password")
+    id = request.form.get("id")
+
+    if not password or not id:
+        flash("Please enter the password and the transaction ID")
+        return redirect('/')
+    
     conn = connect_db()
-    conn.execute("DELETE FROM transactions WHERE transaction_id=?", (request.form.get("id"),))
-    conn.commit()
+    transaction = conn.execute("SELECT * FROM transactions WHERE transaction_id = ?", (id,)).fetchone()
     conn.close()
-    return redirect('/')
+    
+    # if the password is incorrect
+    if password != ADMIN_PASSWORD: 
+        flash("Incorrect password")
+        return redirect('/')
+    
+    # if the transaction is not found
+    elif not transaction:
+        flash("Transaction not found")
+        return redirect('/')
+    
+    # if the transaction is found
+    else:
+        conn = connect_db()
+        conn.execute("DELETE FROM transactions WHERE transaction_id= ?", (id,))
+        conn.commit()
+        conn.close()
+        flash("Transaction deleted successfully")
+        return redirect('/')
 
 @app.route('/error_message')
 def error_message():

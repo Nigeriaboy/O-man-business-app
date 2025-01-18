@@ -7,9 +7,9 @@
 <h1 class="text-center">Transaction History</h1>
 
 <form id="search" action="/search", method="post">
-    <input type="text" name="name" placeholder="Search by Customer Name">
+    <input autocomplete="off" autofocus type="text" name="name" placeholder="Search by Customer Name">
     <span>or</span>
-    <input type="text" name="date" placeholder="Date (yyyy-mm-dd)">
+    <input autocomplete="off" autofocus type="text" name="date" placeholder="Date (yyyy-mm-dd)">
     <input type="submit" value="Search">
 </form>
 
@@ -50,9 +50,12 @@
     </div>
 
     <div class="container delete-container" style="display: none;">
-        <form action="/delete" method="post">
+        <form action="/delete_transaction" , method="post">
                 <div class="col delete-col1">
                     <input autocomplete="off" autofocus type="text" name="id" placeholder="Enter Transaction ID">
+                </div>
+                <div class="col delete-col1">
+                    <input autocomplete="off" autofocus type="password" name="password" placeholder="Enter Password">
                 </div> 
                 <div class="col delete-col2">
                     <input type="submit" value="Submit">

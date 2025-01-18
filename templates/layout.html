@@ -17,6 +17,21 @@
             </ul>
         </nav>
     </header>
+
+    <!-- Flash message -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-info">
+                <ul>
+                    {% for message in messages %}
+                        <li style="list-style: none; font-weight: bold;">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+
     {% block main%} {% endblock%}
 </body>
 </html>

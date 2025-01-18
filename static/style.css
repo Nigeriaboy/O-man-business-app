@@ -121,6 +121,16 @@ label {
     text-align: left;
 }
 
+.alert-info {
+    padding: 0px;
+}
+
+.alert-info ul {
+    text-align: center;
+    margin: 0px;
+    padding: 5px;
+}
+
 /* ...existing code... */
 
 @media (max-width: 480px) {
@@ -140,7 +150,6 @@ label {
     #search input, #search span {
         margin-bottom: 5px;
         display: block;
-        text-align: center;
     }
 
 }
