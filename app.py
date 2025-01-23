@@ -2,6 +2,8 @@ import sqlite3
 from flask import Flask, render_template, redirect, request, flash
 from dotenv import load_dotenv
 import os
+import psycopg2
+from psycopg2.extras import DictCursor
 
 load_dotenv()
 
@@ -13,25 +15,32 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
 # Connect Database
 def connect_db():
-    conn = sqlite3.connect('transaction.db')
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(os.getenv("DATABASE_URL"))
     return conn
 
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
     conn = connect_db()
-    cursor = conn.execute("SELECT * FROM transactions")
-    transactions = cursor.fetchall()
-    conn.close()
+
+    # Esure the cursor and conn are closed even if an error occurs
+    try:
+        cursor = conn.cursor(cursor_factory=DictCursor)
+        cursor.execute("SELECT * FROM transactions")
+        transactions = cursor.fetchall()
+    finally:
+        cursor.close()
+        conn.close()
     return render_template('index.html', transactions=transactions)
 
-@app.route('/add', methods=['POST', 'GET'])
+@app.route('/add_transaction', methods=['POST', 'GET'])
 def add():
     networks = ["Airtel","Mtn", "9mobile", "Glo"]
 
     if request.method == 'POST':
         conn = connect_db()
+        cursor = conn.cursor()
+
         name = request.form.get("name")
         network = request.form.get("network")
         data_or_airtime = request.form.get("d_or_a")
@@ -43,7 +52,14 @@ def add():
         if not (name and network and data_or_airtime and payment_method and plan and amount):
             return redirect("/error_message")
 
-        conn.execute("INSERT INTO transactions (cust_name, network, data_or_airtime, payment_method, plan, amount, remark) VALUES (?,?,?,?,?,?,?)", (name, network, data_or_airtime, payment_method, plan, amount, remark))
+        if not amount.isdigit():
+            flash("Amount must be a number")
+            return redirect('/add_transaction')
+
+
+        cursor.execute("INSERT INTO transactions (cust_name, network, data_or_airtime, payment_method, plan, amount, remark) VALUES (%s,%s,%s,%s,%s,%s,%s)", (name, network, data_or_airtime, payment_method, plan, amount, remark))
+
+        cursor.close()
         conn.commit()
         conn.close()
         return redirect('/')
@@ -60,7 +76,12 @@ def delete_transaction():
         return redirect('/')
     
     conn = connect_db()
-    transaction = conn.execute("SELECT * FROM transactions WHERE transaction_id = ?", (id,)).fetchone()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM transactions WHERE transaction_id = %s", (id,))
+    transaction = cursor.fetchone()
+
+    cursor.close()
     conn.close()
     
     # if the password is incorrect
@@ -76,7 +97,11 @@ def delete_transaction():
     # if the transaction is found
     else:
         conn = connect_db()
-        conn.execute("DELETE FROM transactions WHERE transaction_id= ?", (id,))
+        cursor = conn.cursor()
+
+        cursor.execute("DELETE FROM transactions WHERE transaction_id= %s", (id,))
+
+        cursor.close()
         conn.commit()
         conn.close()
         flash("Transaction deleted successfully")
@@ -98,24 +123,35 @@ def search():
     # check if the user entered only the name
     if name and not date:
         conn = connect_db()
-        cursor = conn.execute("SELECT * FROM transactions WHERE cust_name LIKE ?", ('%' + name + '%',))
+        cursor = conn.cursor(cursor_factory=DictCursor)
+
+        cursor.execute("SELECT * FROM transactions WHERE cust_name LIKE %s", ('%' + name + '%',))
         transactions = cursor.fetchall()
+
+        cursor.close()
         conn.close()
         return render_template('index.html', transactions=transactions)
     
     # check if the user entered only the date
     if date and not name:
         conn = connect_db()
-        cursor = conn.execute("SELECT * FROM transactions WHERE date LIKE ?", ('%' + date + '%',))
+        cursor = conn.cursor(cursor_factory=DictCursor)
+
+        cursor.execute("SELECT * FROM transactions WHERE date LIKE %s", ('%' + date + '%',))
         transactions = cursor.fetchall()
+
+        cursor.close()
         conn.close()
         return render_template('index.html', transactions=transactions)
     
     # check if the user entered both the name and the date
     if name and date:
         conn = connect_db()
-        cursor = conn.execute("SELECT * FROM transactions WHERE cust_name LIKE ? AND date LIKE ?", ('%' + name + '%', '%' + date + '%',))
+        cursor = conn.cursor(cursor_factory=DictCursor)
+        cursor.execute("SELECT * FROM transactions WHERE cust_name LIKE %s AND date LIKE %s", ('%' + name + '%', '%' + date + '%',))
         transactions = cursor.fetchall()
+
+        cursor.close()
         conn.close()
         return render_template('index.html', transactions=transactions)
 
