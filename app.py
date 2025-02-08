@@ -149,7 +149,7 @@ def search():
     if name and date:
         conn = connect_db()
         cursor = conn.cursor(cursor_factory=DictCursor)
-        cursor.execute("SELECT * FROM transactions WHERE cust_name LIKE %s AND date LIKE %s", ('%' + name + '%', '%' + date + '%',))
+        cursor.execute("SELECT * FROM transactions WHERE cust_name LIKE %s AND to_char(date, 'YYYY-MM-DD') LIKE %s", ('%' + name + '%', '%' + date + '%',))
         transactions = cursor.fetchall()
 
         cursor.close()
