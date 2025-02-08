@@ -137,7 +137,8 @@ def search():
         conn = connect_db()
         cursor = conn.cursor(cursor_factory=DictCursor)
 
-        cursor.execute("SELECT * FROM transactions WHERE date LIKE %s", ('%' + date + '%',))
+        # "to_char" is used to turn the 'date' column in the table to string, so that it can be searchable
+        cursor.execute("SELECT * FROM transactions WHERE to_char(date, 'YYYY-MM-DD') LIKE %s", ('%' + date + '%',))
         transactions = cursor.fetchall()
 
         cursor.close()
